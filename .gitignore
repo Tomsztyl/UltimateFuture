@@ -36,3 +36,44 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+*.meta
+*.asset
+*.xml
+*.dll
+*._
+*.shader
+*.txt
+*.cginc
+*.psd
+*.jpg
+*.unity
+*.mat
+*.ttf
+*.fbx
+*.png
+*.prefab
+*.controller
+*.wav
+*.anim
+*.exr
+*.overrideController
+*.physicMaterial
+*.terrainlayer
+*.tif
+*.flare
+*.compute
+*.tga
+*.config
+*.asmdef
+*.md
+*.physicsMaterial2D
+Ultimate FutureMirror/Assets/Mirror/Runtime/Transport/KCP/kcp2k/LICENSE
+*.obj
+*.nupkg
+*.jslib
+*.pdf
+Ultimate FutureMirror/Assets/Mirror/Runtime/Transport/KCP/kcp2k/VERSION
+Ultimate FutureMirror/Assets/Mirror/Runtime/Transport/Telepathy/LICENSE
+*.json
+*.log
+*.p7s

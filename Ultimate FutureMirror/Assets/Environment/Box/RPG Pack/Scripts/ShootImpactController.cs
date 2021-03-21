@@ -5,10 +5,14 @@ using UnityEngine;
 
 public class ShootImpactController : NetworkBehaviour
 {
+    [Header("Variable responsible for ricochet Impact")]
+    [SerializeField] private bool isEnableRicocher = false;
+
     private GameObject objectFromShoot = null;
     private GunKind gunKind = GunKind.None;
     private float damageGet;
     private HealthController healthControllerTarget=null;
+
 
     public void ShootImpactControllerProperties(GameObject objectFromShoot, GunKind gunKind, float damageGet)
     {
@@ -20,13 +24,26 @@ public class ShootImpactController : NetworkBehaviour
     {
         if (other!=null)
         {
-            if (other.transform.GetComponent<HealthController>()!=null)
+            if (isEnableRicocher)
             {
-                HealthController healthControllerTarget= other.transform.GetComponent<HealthController>();
-                healthControllerTarget.TakeDamage(damageGet);
-                Destroy(this.gameObject);
+                TakeDamageMechanic(other);
+            }
+            else
+            {
+                if (other.transform.GetComponent<HealthController>() == objectFromShoot.GetComponent<HealthController>())
+                    return;
+                else
+                {
+                    TakeDamageMechanic(other);
+                }
             }
         }
+    }
+    private void TakeDamageMechanic(Collider other)
+    {
+        HealthController healthControllerTarget = other.transform.GetComponent<HealthController>();
+        healthControllerTarget.TakeDamage(damageGet);
+        Destroy(this.gameObject);
     }
 
 

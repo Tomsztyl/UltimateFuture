@@ -8,13 +8,18 @@ public class CharacterPreviewController : MonoBehaviour
 
     [SerializeField] private GameObject[] ringsUnderPlayer;
 
-    private void Start()
+
+    private bool IsCharacterInstantiate(GameObject prefabCharacter)
     {
-        SpawnCharacterPrefab();
+        if (prefabCharacter == prefabSpawnCharacter)
+            return true;
+        else
+           return false;
     }
 
     public void SetPrefabSpawnCharacter(GameObject character)
     {
+        if (IsCharacterInstantiate(character)) return;
         prefabSpawnCharacter = character;
         ChcekIsExistCharacter();
     }

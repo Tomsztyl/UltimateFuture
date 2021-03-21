@@ -9,13 +9,21 @@ public class CharacterChooseManager : MonoBehaviour
     [SerializeField] private GameObject objectCharacterChoose = null;
     [Tooltip("This variable set object in Room Scene ")]
     [SerializeField] private GameObject objectCharacterChoosePreview = null;
+    [Tooltip("This variable select if gameobject is First Choose Default")]
+    [SerializeField] private bool isFirstChooseDefault = false;
 
     [Header("Variable select RoomPlayer")]
     [Tooltip("This variable set a room Player")]
     [SerializeField] private GameObject roomSelect = null;
     //public ControllRoom selectCharacter = null;
 
-
+    private void Start()
+    {
+        if (isFirstChooseDefault)
+        {
+            SendToRoomObjectCharacter();
+        }
+    }
 
     private GameObject GetObjectCharacterChoose()
     {

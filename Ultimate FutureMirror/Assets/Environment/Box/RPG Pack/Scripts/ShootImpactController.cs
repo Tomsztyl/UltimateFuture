@@ -22,7 +22,7 @@ public class ShootImpactController : NetworkBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other!=null)
+        if (other!=null&&other.transform.GetComponent<HealthController>()!=null)
         {
             if (isEnableRicocher)
             {

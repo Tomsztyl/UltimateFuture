@@ -49,9 +49,11 @@ public class PlayerMirrorController : NetworkBehaviour
     public GameObject pointer = null;
     [SyncVar]
     public Vector3 pointerMovePosition;
-    public bool isPointer = false;  
+    public bool isPointer = false;
 
-
+    [Header("This is a Display Character Text up Head")]
+    [Tooltip("This is a Display Character Text up Head")]
+    [SerializeField] private Transform displayTextUpCharacter = null;
 
 
     void OnValidate()
@@ -130,6 +132,7 @@ public class PlayerMirrorController : NetworkBehaviour
         var cameraInstantiate = Instantiate(Cameras, transform.position, Quaternion.identity);
 
         FreeLookCam freeLookCam = cameraInstantiate.transform.Find("FreeLookCameraRig").GetComponent<FreeLookCam>();
+        GetComponent<PlayerController>().SetCurrentCameraTranform(freeLookCam.GetComponent<Transform>());
         freeLookCam.SetTarget(this.gameObject.transform);
 
 

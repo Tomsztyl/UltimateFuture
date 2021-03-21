@@ -67,12 +67,14 @@ public class PlayerController : NetworkBehaviour
     [Tooltip("This enum pointer check kind gun in hand player")]
     public GunKind GunKind=GunKind.None;
 
-    [Header("This is a Mechanic Camera")]
-    public Transform m_Cam;
-    public Vector3 m_CamForward;
-    public Vector3 m_Move;
-
-
+    [Header("Mechanic Camera Rotation Character where looking Camera")]
+    [SerializeField] private bool isWalkingWhereLookingCamera = true;
+    [SerializeField]private float rotationSpeed = 30f;
+    [SerializeField]private float deadZoneDegrees = 15f;
+    private Transform cameraCurent;
+    private Vector3 cameraDirection;
+    private Vector3 playerDirection;
+    private Quaternion targetRotation;
 
     void Start()
     {
@@ -82,7 +84,6 @@ public class PlayerController : NetworkBehaviour
         boneAimingController = GetComponent<BoneAimingController>();
         cameraControllerPlayer = GetComponent<CameraControllerPlayer>();
         SetBasicSpeed();
-
     }
     #region Setting Speed Player Properties
     public void SetSpeedDefProperties(float speed, float speedRotation)
@@ -109,24 +110,26 @@ public class PlayerController : NetworkBehaviour
         PlayerMoveSelectGunCharacter();
         PlayerJump();
     }
-    private void FixedUpdate()
-    {
-        float h = Input.GetAxis("Mouse X");
-        float v = Input.GetAxis("Mouse Y");
 
-        if (m_Cam != null)
-        {
-            // calculate camera relative direction to move:
-            m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-            m_Move = v * m_CamForward + h * m_Cam.right;
-        }
-        else
-        {
-            // we use world-relative directions in the case of no main camera
-            m_Move = v * Vector3.forward + h * Vector3.right;
+    public void SetCurrentCameraTranform(Transform camera)
+    {
+        cameraCurent = camera;
+    }
+    public void TurnCharacterToCamera()
+    {
+        if (cameraCurent == null) return;
+        if (isWalkingWhereLookingCamera)
+        { 
+            cameraDirection = new Vector3(cameraCurent.forward.x, 0f, cameraCurent.forward.z);
+            playerDirection = new Vector3(transform.forward.x, 0f, transform.forward.z);
+
+            if (Vector3.Angle(cameraDirection, playerDirection) > deadZoneDegrees)
+            {
+                targetRotation = Quaternion.LookRotation(cameraDirection, transform.up);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed* Time.deltaTime);
+            }
         }
     }
-
     private void PlayerMoveSelectGunCharacter()
     {
         if (GunKind == GunKind.None)
@@ -181,6 +184,7 @@ public class PlayerController : NetworkBehaviour
             //Is Walking
             anim.SetBool("isWalking", true);
             isWalkingDef = true;
+            TurnCharacterToCamera();
         }
         else
         {

@@ -50,6 +50,7 @@ public class BoneAimingController : NetworkBehaviour
 
         if (isAiming)
         BoneLookAtAimClients();
+        GetComponent<PlayerController>().TurnCharacterToCamera();
     }
     private void BoneLookAtAimClients()
     {

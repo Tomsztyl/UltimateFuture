@@ -65,10 +65,14 @@ public class PlayerMirrorController : NetworkBehaviour
     void Start()
     {
         TriggerPlayerHUDStart();
-        if (isLocalPlayer) { FindAllSlotControllerServer(); CreateCameraToPlayer(); }
+        if (isLocalPlayer) { SelectCharacterLayer(); FindAllSlotControllerServer(); CreateCameraToPlayer(); }
         isPlayer = isLocalPlayer;
         repairControllerMouse.enabled = isLocalPlayer;
         CameraControllerPlayer.enabled = isLocalPlayer;
+    }
+    void SelectCharacterLayer()
+    {
+        this.gameObject.layer = 8;
     }
     private void Update()
     {

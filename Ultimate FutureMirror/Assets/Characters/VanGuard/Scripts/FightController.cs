@@ -25,6 +25,8 @@ public class FightController : NetworkBehaviour
     [Tooltip("Tihs variable set when player get object in hand")]
     [SerializeField] private HandObjectController handObjectController=null;
 
+    public LayerMask PlayerLayerMask;
+
 
     private void LateUpdate()
     {
@@ -97,7 +99,7 @@ public class FightController : NetworkBehaviour
         MuzzleEffectTriggerServer();
         ShootingSoundServer();
 
-        if (Physics.Raycast(objectHandChild.transform.position, objectHandChild.transform.forward, out hit, weaponeObjectController.GetRangeWeapone()))
+        if (Physics.Raycast(GetComponent<CameraControllerPlayer>().GetChooseCamera().transform.position, GetComponent<CameraControllerPlayer>().GetChooseCamera().transform.forward, out hit, weaponeObjectController.GetRangeWeapone(), PlayerLayerMask))
         {
             //Send To Server to Clinets Point Hit
             InstatniateHitPointShootServer(hit.point, hit.normal) ;

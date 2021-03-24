@@ -16,8 +16,13 @@ public class BoneAimingController : NetworkBehaviour
     [SerializeField] private GameObject leftHandBone=null;
     [SerializeField] private bool isAiming = false;
 
+    [Header("Variable to Adjust Pointer Aim")]
+    [SerializeField]private Vector3 adjustCameraPostionIdle = new Vector3(1.5f, -3f, -1f);
+    [SerializeField]private Vector3 adjustCameraRotationWalking = new Vector3(1f, -3f, 0f);
+
     private CameraControllerPlayer cameraControllerPlayer = null;
-    private Animator animator; 
+    private Animator animator;
+
 
     private void Start()
     {
@@ -57,10 +62,23 @@ public class BoneAimingController : NetworkBehaviour
     }
     private void BoneLookAtAimClients()
     {
+        if (GetComponent<PlayerController>().GetIsWalkingDef())
+        {
+            pointerAim.transform.localPosition = adjustCameraRotationWalking;
+            BoneMovement();
+        }
+        else
+        {
+            pointerAim.transform.localPosition = adjustCameraPostionIdle;
+            BoneMovement();
+        }
+    }
+    private void BoneMovement()
+    {
         spineBone.transform.LookAt(pointerAim.transform);
         spine1Bone.transform.LookAt(pointerAim.transform);
         spine2Bone.transform.LookAt(pointerAim.transform);
-        Debug.DrawLine(leftHandBone.transform.position, pointer.transform.position, Color.magenta);
+        Debug.DrawLine(leftHandBone.transform.position, pointerAim.transform.position, Color.magenta);
     }
 
 

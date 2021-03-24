@@ -193,6 +193,10 @@ public class PlayerController : NetworkBehaviour
             isWalkingDef = false;
         }
     }
+    public bool GetIsWalkingDef()
+    {
+        return isWalkingDef;
+    }
     private void PlayerMoveAnimation(float speedAnimation, float rotationAnimation, bool isWalking, string isRunBack, string isLeftTurn, string isRightTurn)
     {
 

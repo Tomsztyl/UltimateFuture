@@ -9,16 +9,6 @@ public class SelectCharacterManager : NetworkBehaviour
     [SerializeField] private GameObject selectCharacter = null;
     private Transform uIRoomScene = null;
 
-    private void Start()
-    {
-        if (selectCharacter != null&&isLocalPlayer)
-        {
-            uIRoomScene=GameObject.FindGameObjectWithTag("UIRoomScene").GetComponent<Transform>();
-            var selectCharacterInstantiare=Instantiate(selectCharacter, uIRoomScene);
-            SetObjectInCharacterChooseManager(selectCharacterInstantiare);
-        }
-
-    }
     public void SelectChoosePlayerInRoom(GameObject characterObject)
     {
        GetComponent<NetworkRoomPlayerExt>().ExeciuteChangePlayerInstatiate(characterObject);
@@ -33,6 +23,15 @@ public class SelectCharacterManager : NetworkBehaviour
             {
                 characterChooseManager.SetObjectRoomSelect(this.gameObject);
             }
+        }
+    }
+    public void InstantiateSelectCharacter()
+    {
+        if (selectCharacter != null && isLocalPlayer)
+        {
+            uIRoomScene = GameObject.FindGameObjectWithTag("UIRoomScene").GetComponent<Transform>();
+            var selectCharacterInstantiare = Instantiate(selectCharacter, uIRoomScene);
+            SetObjectInCharacterChooseManager(selectCharacterInstantiare);
         }
     }
 }

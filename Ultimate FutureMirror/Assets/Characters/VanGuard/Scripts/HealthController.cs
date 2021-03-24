@@ -39,8 +39,10 @@ public class HealthController : NetworkBehaviour
     
     public void TakeDamage(float damage)
     {
-        healt = healt - damage;
-
+        if (healt <= 0) 
+            return;
+        else
+            healt = healt - damage;
     }
 
     [Command]

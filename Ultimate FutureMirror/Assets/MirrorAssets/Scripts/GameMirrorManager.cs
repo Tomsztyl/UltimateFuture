@@ -5,12 +5,21 @@ using UnityEngine;
 
 public class GameMirrorManager : NetworkBehaviour
 {
-    private void Awake()
+    [SerializeField] private Camera cameraServer = null;
+    private void Start()
     {
-        if (isServerOnly)
+        if (cameraServer == null)
         {
-            Debug.Log("true");
+            cameraServer = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         }
-        else Debug.Log("Nah");
+
+           
+        if (cameraServer!=null)
+            TriggerCameraServer();
+    }
+    private void TriggerCameraServer()
+    {
+        cameraServer.GetComponent<AudioListener>().enabled = isServerOnly;
+        cameraServer.enabled= isServerOnly;
     }
 }

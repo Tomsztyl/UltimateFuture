@@ -30,7 +30,7 @@ public class FightController : NetworkBehaviour
 
     private void LateUpdate()
     {
-        StartShooting();
+       if (isLocalPlayer)StartShooting();
     }
     #region Method Change Trigger Shoot
     public void StartAiming()
@@ -141,31 +141,36 @@ public class FightController : NetworkBehaviour
     private void InstatniateHitPointShootServer(Vector3 hitPoint,Vector3 hitNormal)
     {
         InstatniatePoinShoot(hitPoint, hitNormal);
-        InstatniateHitPointShootClients(hitPoint, hitNormal);
+        //InstatniateHitPointShootClients(hitPoint, hitNormal);
     }
     private void InstatniatePoinShoot(Vector3 hitPoint, Vector3 hitNormal)
     {
         if (weaponeObjectController.GetImpactParticle() != null)
         {
-            var objectInstantiateParticle = Instantiate(weaponeObjectController.GetImpactParticle(), hitPoint, Quaternion.LookRotation(hitNormal));
-            if (NetworkServer.active)
+            if (NetworkServer.active) 
             {
+                //Make in server
+                var objectInstantiateParticle = Instantiate(weaponeObjectController.GetImpactParticle(), hitPoint, Quaternion.LookRotation(hitNormal));
                 NetworkServer.Spawn(objectInstantiateParticle);
+
                 #region Set Poperties Shoot Impact
                 ShootImpactController shootImpactController = objectInstantiateParticle.GetComponent<ShootImpactController>();
+
                 if (shootImpactController != null)
                 {
-                    shootImpactController.ShootImpactControllerProperties(this.gameObject, weaponeObjectController.GetGunKind(), weaponeObjectController.GetDamageWeapone());
+                    shootImpactController.ShootImpactControllerProperties(this.gameObject.GetComponent<NetworkIdentity>().netId, weaponeObjectController.GetGunKind(), weaponeObjectController.GetDamageWeapone());
+                    Debug.Log(this.gameObject);
                 }
                 #endregion
+                Destroy(objectInstantiateParticle.gameObject, 2f);
             }
-            Destroy(objectInstantiateParticle.gameObject, 2f);
+
         }
     }
     [ClientRpc]
     private void InstatniateHitPointShootClients(Vector3 hitPoint, Vector3 hitNormal)
     {
-        InstatniatePoinShoot(hitPoint, hitNormal); 
+        //InstatniatePoinShoot(hitPoint, hitNormal); 
     }
 
     //****

@@ -78,7 +78,6 @@ using UnityEngine.UI;
         }
     public void ExtractBox()
     {
-        Debug.Log("is Triger KEy");
         ChangeAnimation();
         InstantiateRandomItemBox();
         SendInteractionFromBox();
@@ -98,7 +97,6 @@ using UnityEngine.UI;
         }
         private void InstantiateRandomItemBox()
         {
-            Debug.Log("List have size: " + objectInstantiateToDestroy.Count);
             //Instantiate count object of 1 to Object list count 
             for (int i = 0; i < Random.Range(1, objectInstantiateToDestroy.Count); i++)
             {

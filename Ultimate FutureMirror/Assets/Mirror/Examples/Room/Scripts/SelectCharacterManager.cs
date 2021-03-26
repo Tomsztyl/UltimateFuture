@@ -9,6 +9,11 @@ public class SelectCharacterManager : NetworkBehaviour
     [SerializeField] private GameObject selectCharacter = null;
     private Transform uIRoomScene = null;
 
+    private void Start()
+    {
+        GetComponent<AudioSource>().enabled = isLocalPlayer;
+    }
+
     public void SelectChoosePlayerInRoom(GameObject characterObject)
     {
        GetComponent<NetworkRoomPlayerExt>().ExeciuteChangePlayerInstatiate(characterObject);

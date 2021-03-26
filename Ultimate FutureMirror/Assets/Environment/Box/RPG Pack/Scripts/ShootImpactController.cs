@@ -6,19 +6,26 @@ using UnityEngine;
 public class ShootImpactController : NetworkBehaviour
 {
     [Header("Variable responsible for ricochet Impact")]
+    [SyncVar]
     [SerializeField] private bool isEnableRicocher = false;
+    [SyncVar]
+    public uint netIndexObjectFromShoot;
+    public HealthController objectFromShoot = null;
+    [SyncVar]
+    public GunKind gunKind = GunKind.None;
+    [SyncVar]
+    public float damageGet;
 
-    private GameObject objectFromShoot = null;
-    private GunKind gunKind = GunKind.None;
-    private float damageGet;
-    private HealthController healthControllerTarget=null;
 
-
-    public void ShootImpactControllerProperties(GameObject objectFromShoot, GunKind gunKind, float damageGet)
+    public void ShootImpactControllerProperties(uint netIndexObjectFromShoot, GunKind gunKind, float damageGet)
     {
-        this.objectFromShoot = objectFromShoot;
+        this.netIndexObjectFromShoot = netIndexObjectFromShoot;
         this.gunKind = gunKind;
         this.damageGet = damageGet;
+
+        //Set Game Object From Shot
+        if (netIndexObjectFromShoot!=0)
+        objectFromShoot = NetworkIdentity.spawned[netIndexObjectFromShoot].GetComponent<HealthController>();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -30,12 +37,16 @@ public class ShootImpactController : NetworkBehaviour
             }
             else
             {
-                if (other.transform.GetComponent<HealthController>() == objectFromShoot.GetComponent<HealthController>())
-                    return;
-                else
+                if (objectFromShoot!=null)
                 {
-                    TakeDamageMechanic(other);
+                    if (other.transform.GetComponent<HealthController>() == objectFromShoot)
+                        return;
+                    else
+                    {
+                        TakeDamageMechanic(other);
+                    }
                 }
+                
             }
         }
     }

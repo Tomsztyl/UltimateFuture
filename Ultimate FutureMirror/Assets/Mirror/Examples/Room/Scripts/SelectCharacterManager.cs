@@ -36,6 +36,7 @@ public class SelectCharacterManager : NetworkBehaviour
         {
             uIRoomScene = GameObject.FindGameObjectWithTag("UIRoomScene").GetComponent<Transform>();
             var selectCharacterInstantiare = Instantiate(selectCharacter, uIRoomScene);
+            selectCharacterInstantiare.SetActive(isLocalPlayer);
             SetObjectInCharacterChooseManager(selectCharacterInstantiare);
         }
     }

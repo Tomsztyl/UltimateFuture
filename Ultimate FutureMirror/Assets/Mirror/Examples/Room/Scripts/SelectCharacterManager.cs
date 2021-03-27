@@ -32,11 +32,11 @@ public class SelectCharacterManager : NetworkBehaviour
     }
     public void InstantiateSelectCharacter()
     {
-        if (selectCharacter != null && isLocalPlayer)
+        if (selectCharacter != null)
         {
             uIRoomScene = GameObject.FindGameObjectWithTag("UIRoomScene").GetComponent<Transform>();
             var selectCharacterInstantiare = Instantiate(selectCharacter, uIRoomScene);
-            selectCharacterInstantiare.SetActive(isLocalPlayer);
+            //selectCharacterInstantiare.SetActive(isLocalPlayer);
             SetObjectInCharacterChooseManager(selectCharacterInstantiare);
         }
     }

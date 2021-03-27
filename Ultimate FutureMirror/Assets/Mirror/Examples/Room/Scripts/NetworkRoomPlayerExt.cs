@@ -20,9 +20,11 @@ namespace Mirror.Examples.NetworkRoom
         public override void OnClientEnterRoom()
         {
             if (logger.LogEnabled()) logger.LogFormat(LogType.Log, "OnClientEnterRoom {0}", SceneManager.GetActiveScene().path);
-            GetComponent<SelectCharacterManager>().enabled = isLocalPlayer;
-            GetComponent<SelectCharacterManager>().InstantiateSelectCharacter();
-
+            if (isLocalPlayer)
+            {//instantiate and select choose character in roomPlayer
+                GetComponent<SelectCharacterManager>().enabled = isLocalPlayer;
+                GetComponent<SelectCharacterManager>().InstantiateSelectCharacter();
+            }
 
         }
 

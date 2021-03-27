@@ -3,20 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickUpMaterial : MonoBehaviour
+public class PickUpMaterial : NetworkBehaviour
 {
     [SerializeField] private InventoryManager inventoryManager;
 
     [SerializeField] private Sprite spritePickUpObject = null;
     [SerializeField] private ScriptableObject prefabPickUp = null;
-    [SerializeField] [Range(1, 10)] private float countObject = 1;
-
+    [SyncVar]
+    [SerializeField] private float countObject = 1;
+    [SyncVar]
     [SerializeField] private bool isPistol = false;
+    [SyncVar]
     [SerializeField] private bool isRifle = false;
 
     private void Start()
     {
         //Random coundObject
+        RandomCountObject();
+    }
+    [ServerCallback]
+    private void RandomCountObject()
+    {
         countObject = Random.Range(1, 10);
     }
     void OnTriggerEnter(Collider other)

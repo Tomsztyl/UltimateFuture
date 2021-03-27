@@ -103,13 +103,6 @@ public class FightController : NetworkBehaviour
         {
             //Send To Server to Clinets Point Hit
             InstatniateHitPointShootServer(hit.point, hit.normal) ;
-
-            BoxController boxController = hit.transform.GetComponent<BoxController>();
-            if (boxController != null)
-            {
-                boxController.ExtractBox();
-            }
-
         }
     }
     #region Effect Particle Shoot
@@ -141,7 +134,6 @@ public class FightController : NetworkBehaviour
     private void InstatniateHitPointShootServer(Vector3 hitPoint,Vector3 hitNormal)
     {
         InstatniatePoinShoot(hitPoint, hitNormal);
-        //InstatniateHitPointShootClients(hitPoint, hitNormal);
     }
     private void InstatniatePoinShoot(Vector3 hitPoint, Vector3 hitNormal)
     {
@@ -159,7 +151,6 @@ public class FightController : NetworkBehaviour
                 if (shootImpactController != null)
                 {
                     shootImpactController.ShootImpactControllerProperties(this.gameObject.GetComponent<NetworkIdentity>().netId, weaponeObjectController.GetGunKind(), weaponeObjectController.GetDamageWeapone());
-                    Debug.Log(this.gameObject);
                 }
                 #endregion
                 Destroy(objectInstantiateParticle.gameObject, 2f);
@@ -167,33 +158,6 @@ public class FightController : NetworkBehaviour
 
         }
     }
-    [ClientRpc]
-    private void InstatniateHitPointShootClients(Vector3 hitPoint, Vector3 hitNormal)
-    {
-        //InstatniatePoinShoot(hitPoint, hitNormal); 
-    }
-
-    //****
-
-    //Trigger Destroy Box To Shooting Server to Clinets 
-    [Command]
-    private void ShootingDestroyBoxServer(GameObject hitParticle)
-    {
-        Debug.Log(hitParticle);
-       // ShootingDestoyBoxClients(hitParticle);
-    }
-    [ClientRpc]
-    private void ShootingDestoyBoxClients(GameObject hitParticle)
-    {
-        //BoxController boxController = hitParticle.transform.GetComponent<BoxController>();
-        //if (boxController != null)
-        //{
-        //    boxController.ExtractBox();
-        //}
-    }
-    //*****
-
-
     #endregion
     #region Effect Audio Shoot
     [Command]

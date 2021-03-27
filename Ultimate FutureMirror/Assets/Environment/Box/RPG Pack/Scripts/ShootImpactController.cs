@@ -29,7 +29,8 @@ public class ShootImpactController : NetworkBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other!=null&&other.transform.GetComponent<HealthController>()!=null)
+        #region Take Damage Mechanism
+        if (other.transform.GetComponent<HealthController>()!=null)
         {
             if (isEnableRicocher)
             {
@@ -49,6 +50,14 @@ public class ShootImpactController : NetworkBehaviour
                 
             }
         }
+        #endregion
+
+        #region Destroy Box Pandora
+        if (other.transform.GetComponent<BoxController>()!=null)
+        {
+            other.transform.GetComponent<BoxController>().ExtractBoxPandora();
+        }
+        #endregion
     }
     private void TakeDamageMechanic(Collider other)
     {

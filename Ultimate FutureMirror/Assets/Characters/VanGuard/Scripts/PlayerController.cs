@@ -28,15 +28,15 @@ public class PlayerController : NetworkBehaviour
     //Actual Speed Player
     [Header("This is Actuall Speed And Rotation Player")]
     [Tooltip("This variable set Actual Speed Player")]
-    [SerializeField] private float acctualSpeed;
+    private float acctualSpeed;
     [Tooltip("This variable set Actual Speed Roration Player")]
-    [SerializeField] private float acctualSpeedRotation;
+    private float acctualSpeedRotation;
 
     //Default Settings Move Player
     [Header("Default Settings Move Player")]
-    [SerializeField] private float speedAnimationDef = 0f;
-    [SerializeField] private float rotationAnimationDef = 0f;
-    [SerializeField] private bool isWalkingDef = false;
+    private float speedAnimationDef = 0f;
+    private float rotationAnimationDef = 0f;
+    private bool isWalkingDef = false;
 
     //Default Settings Move Player Aim Gun
     [Header("Default Settings Move Player Aim Gun")]
@@ -50,8 +50,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float speedSprintToAdd = 3f;
     [SerializeField] private float rotationSpeedSprintingToAdd = 10f;
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
-    public float speedSprintCalculate = 0f;
-    public float speedRotationSprintCalculate = 0f;
+    private float speedSprintCalculate = 0f;
+    private float speedRotationSprintCalculate = 0f;
 
     //Default Setting Junp Player
     [Header("Default Setting Junp Player")]

@@ -57,7 +57,8 @@ public class PlayerController : NetworkBehaviour
     [Header("Default Setting Junp Player")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private float jumpAceleration = 100f;
-    [SerializeField] private bool isGround = false;
+    [SerializeField] private LayerMask ignoreLayerGround;
+    [SerializeField] private float sizeRayJump = 0.7f;
     private CapsuleCollider capsuleCollider; 
     private Rigidbody rigidbody;
 
@@ -109,6 +110,7 @@ public class PlayerController : NetworkBehaviour
     {
         PlayerMoveSelectGunCharacter();
         PlayerJump();
+        RayToCheckIsGorund();
     }
 
     public void SetCurrentCameraTranform(Transform camera)
@@ -295,7 +297,7 @@ public class PlayerController : NetworkBehaviour
     #endregion
     private void PlayerJump()
     {
-        if (Input.GetKeyDown(jumpKey) && isGround)
+        if (Input.GetKeyDown(jumpKey) && RayToCheckIsGorund())
         {
            // Debug.LogWarning("Jump");
             rigidbody.AddForce(new Vector3(0, jumpAceleration, 0), ForceMode.Impulse);
@@ -310,23 +312,22 @@ public class PlayerController : NetworkBehaviour
     }
     private void CheckIsGrounded()
     {
-        if (isGround)
+        if (RayToCheckIsGorund())
         {
             anim.SetBool("isJumping", false);
         }
     }
-    private void OnCollisionEnter(Collision collision)
+    private bool RayToCheckIsGorund()
     {
-        if (collision.gameObject.tag == "Environment" ||collision.gameObject.tag=="Case")
+        RaycastHit hit;
+
+
+        if (Physics.Raycast(this.transform.position, this.transform.up*-1.0f, out hit, sizeRayJump, ignoreLayerGround))
         {
-            isGround = true;
+            //Send To Server to Clinets Point Hit
+            Debug.DrawLine(this.transform.position, hit.point,Color.green);
+            return true;
         }
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.tag == "Environment" || collision.gameObject.tag == "Case")
-        {
-            isGround = false;
-        }
+        return false;
     }
 }

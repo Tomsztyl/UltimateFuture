@@ -17,12 +17,19 @@ public class HealthController : NetworkBehaviour
     [Tooltip("Default Healt is 100")]
     [SyncVar]
     public float healt = 100;
+    [SyncVar]
+    public float healtdef;
     //[SerializeField] private KindCharacter kindCharacter;
     public TextMeshPro textHealt;
 
     [SerializeField] private CharacterKind characterKind = CharacterKind.None;
     private bool isDying = false;
     [SerializeField] private bool death = false;
+
+    private void Awake()
+    {
+        healtdef = healt;
+    }
 
     private void Update()
     {
@@ -42,7 +49,10 @@ public class HealthController : NetworkBehaviour
         if (healt <= 0) 
             return;
         else
+        {
             healt = healt - damage;
+        }
+
     }
 
     [Command]

@@ -1,12 +1,25 @@
 ﻿using Mirror;
+using RotaryHeart.Lib.SerializableDictionary;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : NetworkBehaviour
 {
+    //Get Properties Kind Bar
+    public enum KindBarHUD
+    {
+        health,
+        stamine,
+    }
+    //Properties needed for Bar HUD
+    HealthController health;
+    PlayerController playerController;
+
+
     [Header("This is Message Panel")]
     [SerializeField] private GameObject messagePanel;
     [SerializeField] private Text messagePanelTxt;
@@ -21,42 +34,21 @@ public class UIManager : NetworkBehaviour
     [SerializeField] private GameObject toolBox;
     [SerializeField] private KeyCode keyControlToolBox = KeyCode.E;
     bool activeToolBox = false;
-
-
-    [Header("This is a controls to Bar Controller")]
-    [Tooltip("This is a object from HUD Player to Control Healt")]
-    [SerializeField] private GameObject barControllerLeftHealt = null;
-    [SerializeField] private TextMeshProUGUI textMeshProUGUIHealt=null;
-    HealthController health;
-    private Material mat;
-    public float fillTarget = .5f;
-    public float delta = 0f;
-    public float dampening = 5f;
-
-
-
-
-
+    
 
     private void Start()
     {
-        FindObjectMateria();
+        FindObjectsRequiredBar();
     }
 
     private void Update()
     {
         EnableConsole();
-
-
     }
     private void LateUpdate()
     {
         ChangeToolBoxActive();
-
-        if (health != null)
-        {
-            ControllBarHealth(health.healt, health.healtdef);
-        }
+        ChooseBarMechanic();
     }
 
 
@@ -105,39 +97,78 @@ public class UIManager : NetworkBehaviour
             activeToolBox = false;
         }
     }
-    #region Mechanics Bar Health
-    public void ControllBarHealth(float health,float defValue)
-    {
-        //Debug.Log(PercentToValue(1, ValueToPercent(health, defValue)));
-        delta -= fillTarget - PercentToValue(1, ValueToPercent(health, defValue));
-        fillTarget = PercentToValue(1, ValueToPercent(health, defValue));
-
-        if (textMeshProUGUIHealt != null) {textMeshProUGUIHealt.text =ValueToPercent(health, defValue) + "%"; }
-
-        delta = Mathf.Lerp(delta, 0, Time.deltaTime * dampening);
-
-        mat.SetFloat("_Delta", delta);
-        mat.SetFloat("_Fill", fillTarget);
-    }
-    private void FindObjectMateria()
+    #region Mechanics Bar 
+    private void FindObjectsRequiredBar()
     {
         health = this.gameObject.transform.root.GetComponent<HealthController>();
+        playerController = this.gameObject.transform.root.GetComponent<PlayerController>();
+        SetPropertiesMaterial(KindBarHUD.health, FindObjectMateria(GetBarPropetriesHUD(KindBarHUD.health).barController));
+        SetPropertiesMaterial(KindBarHUD.stamine, FindObjectMateria(GetBarPropetriesHUD(KindBarHUD.stamine).barController));
+    }
+    private void ChooseBarMechanic()
+    {
+        if (health != null && GetBarPropetriesHUD(KindBarHUD.health).barMaterial != null)
+        {
+            ControllBarHealth(KindBarHUD.health, health.healt, health.healtdef, GetBarPropetriesHUD(KindBarHUD.health).barMaterial, GetBarPropetriesHUD(KindBarHUD.health).textMeshProUGUI);
+        }
 
-        Renderer rend = barControllerLeftHealt.GetComponent<Renderer>();
-        Image img = barControllerLeftHealt.GetComponent<Image>();
+        if (playerController != null && GetBarPropetriesHUD(KindBarHUD.stamine).barMaterial != null)
+        {
+            ControllBarStamine(KindBarHUD.stamine, playerController.GetCalculateStamine(), playerController.GetStamineTime(), GetBarPropetriesHUD(KindBarHUD.stamine).barMaterial, GetBarPropetriesHUD(KindBarHUD.stamine).textMeshProUGUI);
+        }
+    }
+    private void ControllBarHealth(KindBarHUD kindBarHUD, float health, float defHealth, Material materialHealthBar, TextMeshProUGUI textProBarHealth)
+    {
+        ControllBar(kindBarHUD, health, defHealth, materialHealthBar, textProBarHealth);
+    }
+    private void ControllBarStamine(KindBarHUD kindBarHUD, float stamine, float deStamine, Material materialStamineBar, TextMeshProUGUI textProBarHealth)
+    {
+        ControllBar(kindBarHUD, stamine, deStamine, materialStamineBar, textProBarHealth);
+    }
+    private void ControllBar(KindBarHUD kindBarHUD,float value, float defValue, Material materialBar, TextMeshProUGUI textProBar)
+    {
+        float fillTarget = GetBarPropetriesHUD(kindBarHUD).fillTarget;
+        float delta= GetBarPropetriesHUD(kindBarHUD).delta;
+
+        delta -= GetBarPropetriesHUD(kindBarHUD).fillTarget - PercentToValue(1, ValueToPercent(value, defValue));
+        fillTarget = PercentToValue(1, ValueToPercent(value, defValue));
+
+
+        if (textProBar != null) { textProBar.text = ValueToPercent(value, defValue) + "%"; }
+
+        delta = Mathf.Lerp(delta, 0, Time.deltaTime * GetBarPropetriesHUD(kindBarHUD).dampening);
+
+        SetPropertiesDelta(kindBarHUD, delta);
+        SetPropertiesFillTarget(kindBarHUD, fillTarget);
+
+        materialBar.SetFloat("_Delta", GetBarPropetriesHUD(kindBarHUD).delta);
+        materialBar.SetFloat("_Fill", GetBarPropetriesHUD(kindBarHUD).fillTarget);
+    }
+    public Material FindObjectMateria(GameObject objectBar)
+    {
+        Material materialObject;
+
+
+        Renderer rend = objectBar.GetComponent<Renderer>();
+        Image img = objectBar.GetComponent<Image>();
         if (rend != null)
         {
-            mat = new Material(rend.material);
-            rend.material = mat;
+            materialObject = new Material(rend.material);
+            rend.material = materialObject;
+
+            return materialObject;
         }
         else if (img != null)
         {
-            mat = new Material(img.material);
-            img.material = mat;
+            materialObject = new Material(img.material);
+            img.material = materialObject;
+
+            return materialObject;
         }
         else
         {
             Debug.LogWarning("No Renderer or Image attached to " + name);
+            return null;
         }
     }
     private int ValueToPercent(float value,float defValue)
@@ -148,5 +179,41 @@ public class UIManager : NetworkBehaviour
     {
         return (float)((float)value * percent * 0.01);
     }
+    #region Properties Bar
+    [SerializeField]
+    public BarPropertiesHUD _BarPropertiesHUD;
+
+    [System.Serializable]
+    public class BarPropertiesHUD : SerializableDictionaryBase<KindBarHUD, BarPropertie> { }
+
+    [System.Serializable]
+    public class BarPropertie
+    {
+        public GameObject barController = null;
+        public TextMeshProUGUI textMeshProUGUI = null;
+        public Material barMaterial = null;
+        public float fillTarget = .5f;
+        public float delta = 0f;
+        public float dampening = 5f;
+    }
+
+    public BarPropertie GetBarPropetriesHUD(KindBarHUD kindBarHUD)
+    {
+        return _BarPropertiesHUD.FirstOrDefault(x => x.Key == kindBarHUD).Value;
+    }
+    public void SetPropertiesMaterial(KindBarHUD kindBarHUD, Material materialBar)
+    {
+        _BarPropertiesHUD.FirstOrDefault(x => x.Key == kindBarHUD).Value.barMaterial= materialBar;
+    }
+    public void SetPropertiesDelta(KindBarHUD kindBarHUD, float delta)
+    {
+        _BarPropertiesHUD.FirstOrDefault(x => x.Key == kindBarHUD).Value.delta= delta;
+    }
+    public void SetPropertiesFillTarget(KindBarHUD kindBarHUD, float fillTarget)
+    {
+        _BarPropertiesHUD.FirstOrDefault(x => x.Key == kindBarHUD).Value.fillTarget = fillTarget;
+    }
+
+    #endregion
     #endregion
 }

@@ -1,11 +1,10 @@
-﻿using Mirror;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SlotController : NetworkBehaviour
+public class SlotController : MonoBehaviour
 {
     [SerializeField] private ScriptableObject prefabObject;
     [SerializeField] private GameObject objectFromScriptableObject = null;
@@ -29,16 +28,6 @@ public class SlotController : NetworkBehaviour
     {
         playerMirrorController = this.gameObject.transform.root.GetComponent<PlayerMirrorController>();
         slotController = GetComponent<SlotController>();
-    }
-    private void DestoryAllObjectInHand(Transform hand)
-    {
-        foreach (Transform child in hand.transform)
-        {
-            if (child.name == "ObjectHand(Clone)")
-            {
-                Destroy(child.gameObject);
-            }
-        }
     }
     private void SetObjectKeyTrigger()
     {

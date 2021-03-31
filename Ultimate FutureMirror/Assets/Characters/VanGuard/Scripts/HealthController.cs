@@ -96,8 +96,4 @@ public class HealthController : NetworkBehaviour
         GetComponent<Animator>().SetBool(paramName, false);
     }
     #endregion
-
-
-
-
 }

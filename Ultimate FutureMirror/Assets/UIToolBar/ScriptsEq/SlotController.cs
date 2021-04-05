@@ -6,29 +6,26 @@ using UnityEngine.UI;
 
 public class SlotController : MonoBehaviour
 {
+    [Header("This Variables set object in EQ")]
     [SerializeField] private ScriptableObject prefabObject;
-    [SerializeField] private GameObject objectFromScriptableObject = null;
     [SerializeField] private Sprite spriteObject;
     [SerializeField] private float countObject;
     [SerializeField] private KeyCode keyCodeObject;
+    private PlayerController playerController;
+    private PlayerMirrorController playerMirrorController;
 
-    [SerializeField] private PlayerController playerController;
-    [SerializeField] private PlayerMirrorController playerMirrorController;
-    [SerializeField] private Transform rightHand;
-    [SerializeField] private Transform leftHand;
+    [Header("This is Vairables set List Action Slot")]
+    [SerializeField] private GameObject listActionSlot = null;
 
-    public SlotController slotController;
-
-
+    private void Start()
+    {
+        playerMirrorController = this.gameObject.transform.root.GetComponent<PlayerMirrorController>();
+    }
     private void Update()
     {
         SetObjectKeyTrigger();
     }
-    private void Start()
-    {
-        playerMirrorController = this.gameObject.transform.root.GetComponent<PlayerMirrorController>();
-        slotController = GetComponent<SlotController>();
-    }
+    #region Set Object In EQ Slot
     private void SetObjectKeyTrigger()
     {
         if (Input.GetKeyDown(keyCodeObject) && playerMirrorController.isPlayer)
@@ -37,18 +34,15 @@ public class SlotController : MonoBehaviour
             {
                 playerController = this.gameObject.transform.root.GetComponent<PlayerController>();
                 playerController.GunKind = GunKind.None;
-                //DestoryAllObjectInHand(rightHand);
             }
             else if (prefabObject is WeaponeObjectController)
             {
-               // DestoryAllObjectInHand(rightHand);
                 WeaponeObjectController weaponeObjectController = (WeaponeObjectController)prefabObject;
                 playerController = this.gameObject.transform.root.GetComponent<PlayerController>();
                 playerController.GunKind = GunKind.Rifle;
             }
             else if (prefabObject is HandObjectController)
             {
-                //DestoryAllObjectInHand(rightHand);
                 HandObjectController handObjectController = (HandObjectController)prefabObject;
                 playerController = this.gameObject.transform.root.GetComponent<PlayerController>();
                 playerController.GunKind = GunKind.Object;
@@ -76,6 +70,30 @@ public class SlotController : MonoBehaviour
         Text textCount = gameObject.transform.Find("Border/ItemImage/Count").GetComponent<Text>();
         textCount.text = "" + countObject;
     }
+    #endregion
+    #region Drop Object From Slot
+    private void TrrigerDrop()
+    {
+        if (!IsEmptyCheckSlot())
+        {
+            //Not empty slot
+
+        }
+        else
+        {
+            //Empty slot
+        }
+    }
+    private bool IsEmptyCheckSlot()
+    {
+        if (prefabObject == null && spriteObject == null && countObject <= 0)
+        {
+            return true;
+        }
+        else return false;
+    }
+    #endregion
+    #region Validation Variables
     public void SetKeyCode(KeyCode keyCode)
     {
         keyCodeObject = keyCode;
@@ -96,8 +114,5 @@ public class SlotController : MonoBehaviour
     {
         return keyCodeObject;
     }
-    public GameObject ObjectReturn()
-    {
-        return objectFromScriptableObject;
-    }
+    #endregion
 }

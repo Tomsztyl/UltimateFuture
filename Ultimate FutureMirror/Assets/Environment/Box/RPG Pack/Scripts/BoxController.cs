@@ -22,12 +22,12 @@ public class BoxController : NetworkBehaviour
     //Radius Instantiate Object
     [SerializeField] private float chaseDistance = 5f;
     [SerializeField] private float chaseDistanceY = 10f;
-    [SerializeField] private Vector3 vec3Change;
+    [SerializeField] private Vector3 sphareInstantiareObject;
 
     private void Update()
     {
         //update postion to instantiate object in sphare
-        vec3Change = new Vector3(transform.position.x, transform.position.y + chaseDistanceY, transform.position.z);
+        sphareInstantiareObject = new Vector3(transform.position.x, transform.position.y + chaseDistanceY, transform.position.z);
         if (transform.position.y < rangeDestroyBoxWhenIsNoTerrain)
         {
             Destroy(this.gameObject);
@@ -48,7 +48,7 @@ public class BoxController : NetworkBehaviour
         for (int i = 0; i < Random.Range(1, objectInstantiateToDestroy.Count); i++)
         {
             int RandomObject = Random.Range(0, objectInstantiateToDestroy.Count);
-            var randomObjectInstantiate= Instantiate(objectInstantiateToDestroy[RandomObject], objectInstantiateToDestroy[RandomObject].transform.position = vec3Change + Random.onUnitSphere * chaseDistance, Quaternion.identity);
+            var randomObjectInstantiate= Instantiate(objectInstantiateToDestroy[RandomObject], objectInstantiateToDestroy[RandomObject].transform.position = sphareInstantiareObject + Random.onUnitSphere * chaseDistance, Quaternion.identity);
             if (NetworkServer.active)
             {
                 NetworkServer.Spawn(randomObjectInstantiate);
@@ -63,9 +63,9 @@ public class BoxController : NetworkBehaviour
     private void OnDrawGizmosSelected()
     {
         //select where in gizmos must have drop object
-        vec3Change = new Vector3(transform.position.x, transform.position.y + chaseDistanceY, transform.position.z);
+        sphareInstantiareObject = new Vector3(transform.position.x, transform.position.y + chaseDistanceY, transform.position.z);
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(vec3Change, chaseDistance);
+        Gizmos.DrawWireSphere(sphareInstantiareObject, chaseDistance);
     }
     #region Destoy Object Mechanism
     private void DestoryObjectChange()

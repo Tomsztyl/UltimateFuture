@@ -47,11 +47,18 @@ public class PlayerController : NetworkBehaviour
 
     //Default Setting Sprint Player
     [Header("Default Setting Sprint Player")]
+    [SerializeField] private bool isSprinting = false;  
     [SerializeField] private float speedSprintToAdd = 3f;
     [SerializeField] private float rotationSpeedSprintingToAdd = 10f;
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
+    [Tooltip("Player stamina time")]
+    [SerializeField] private float stamineTime = 10f;
+    [Tooltip("Player stamina running time")]
+    [SerializeField] private float calculateStamine = 0f;
     private float speedSprintCalculate = 0f;
     private float speedRotationSprintCalculate = 0f;
+    private bool CR_runningSprint = false;
+    private bool isExhaustion = false;
 
     //Default Setting Junp Player
     [Header("Default Setting Junp Player")]
@@ -86,23 +93,7 @@ public class PlayerController : NetworkBehaviour
         cameraControllerPlayer = GetComponent<CameraControllerPlayer>();
         SetBasicSpeed();
     }
-    #region Setting Speed Player Properties
-    public void SetSpeedDefProperties(float speed, float speedRotation)
-    {
-        acctualSpeed = speed;
-        acctualSpeedRotation = speedRotation;
-    }
-    public void SetSpeedGunAimProperties(float speed, float speedRotation)
-    {
-        acctualSpeed = speed;
-        acctualSpeedRotation = speedRotation;
-    }
-    public void SetBasicSpeed()
-    {
-        acctualSpeed = basicSpeed;
-        acctualSpeedRotation = basicRotationSpeed;
-    }
-    #endregion
+    
 
 
     // Update is called once per frame
@@ -110,9 +101,8 @@ public class PlayerController : NetworkBehaviour
     {
         PlayerMoveSelectGunCharacter();
         PlayerJump();
-        RayToCheckIsGorund();
     }
-
+    #region Camera Rotation Where Player Looking
     public void SetCurrentCameraTranform(Transform camera)
     {
         cameraCurent = camera;
@@ -132,6 +122,8 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
+    #endregion
+    #region Player Move Kind Character
     private void PlayerMoveSelectGunCharacter()
     {
         if (GunKind == GunKind.None)
@@ -233,6 +225,8 @@ public class PlayerController : NetworkBehaviour
             anim.SetBool(isRightTurn, false);
         }
     }
+    #endregion
+    #region Aiming Player
     private void PlayerAimGunStanding()
     {
         if (Input.GetKeyDown(aimGun))
@@ -265,6 +259,7 @@ public class PlayerController : NetworkBehaviour
     {
         return rotationAnimationDef;
     }
+    #endregion
     #region Mechanic Sprint Player Calcualte
     public void RestetCalculateVariable()
     {
@@ -275,26 +270,115 @@ public class PlayerController : NetworkBehaviour
     {
         speedSprintCalculate = acctualSpeed;
         speedRotationSprintCalculate = acctualSpeedRotation;
+        isSprinting = false;
     }
+
     private void PlayerCheckIsSprint()
     {
-        if (Input.GetKeyDown(sprintKey))
-        {
-            //Start Sprinting
-            SetDefaultSpeedToVariableCalculate();
-            acctualSpeed += speedSprintToAdd;
-            acctualSpeedRotation += rotationSpeedSprintingToAdd;
-        }
+        TriggerExhaustionCharacter();
+        if (!isExhaustion)
+        { 
+            if (Input.GetKeyDown(sprintKey))
+            {
+                //Start Sprinting
+                SetDefaultSpeedToVariableCalculate();
+                acctualSpeed += speedSprintToAdd;
+                acctualSpeedRotation += rotationSpeedSprintingToAdd;
 
-        if (Input.GetKeyUp(sprintKey))
+                //Exhaustion calculation
+                isSprinting = true;
+
+            }
+
+            if (Input.GetKeyUp(sprintKey))
+            {
+                //Stop Sprinting
+                acctualSpeed = speedSprintCalculate;
+                acctualSpeedRotation = speedRotationSprintCalculate;
+                RestetCalculateVariable();
+
+                //  Exhaustion calculation
+                isSprinting = false;
+            }
+        }
+        else
         {
             //Stop Sprinting
             acctualSpeed = speedSprintCalculate;
             acctualSpeedRotation = speedRotationSprintCalculate;
-            RestetCalculateVariable();
+
+            //  Exhaustion calculation
+            isSprinting = false;
         }
     }
+    #region Exhaustion Character
+    private void TriggerExhaustionCharacter()
+    {
+        if (calculateStamine >= stamineTime)
+        {
+            isExhaustion = true;
+        }
+        else
+        {
+            isExhaustion = false;
+        }
+
+
+        if (isSprinting && calculateStamine < stamineTime && !CR_runningSprint && isWalkingDef)
+        {
+            StartCoroutine(CorutineExhaustionAdd());
+        }
+        else if (!isSprinting && calculateStamine > 0 && calculateStamine <= stamineTime && !CR_runningSprint)
+        {
+            StartCoroutine(CorutineExhaustionGrab());
+        }
+        else if (isSprinting&&!isWalkingDef && !CR_runningSprint && calculateStamine <= stamineTime&& calculateStamine > 0)
+        {
+            StartCoroutine(CorutineExhaustionGrab());
+        }
+    }
+    private IEnumerator CorutineExhaustionAdd()
+    {
+        CR_runningSprint = true;
+        calculateStamine++;
+        yield return new WaitForSeconds(1f);
+        CR_runningSprint = false;
+    }
+    private IEnumerator CorutineExhaustionGrab()
+    {
+        CR_runningSprint = true;
+        calculateStamine--;
+        yield return new WaitForSeconds(1f);
+        CR_runningSprint = false;
+    }
+    public float GetCalculateStamine()
+    {
+        return calculateStamine;
+    }
+    public float GetStamineTime()
+    {
+        return stamineTime;
+    }
     #endregion
+    #endregion
+    #region Setting Speed Player Properties
+    public void SetSpeedDefProperties(float speed, float speedRotation)
+    {
+        acctualSpeed = speed;
+        acctualSpeedRotation = speedRotation;
+    }
+    public void SetSpeedGunAimProperties(float speed, float speedRotation)
+    {
+        acctualSpeed = speed;
+        acctualSpeedRotation = speedRotation;
+    }
+    public void SetBasicSpeed()
+    {
+        acctualSpeed = basicSpeed;
+        acctualSpeedRotation = basicRotationSpeed;
+    }
+    #endregion
+    #region Mechanics Player Jumping
     private void PlayerJump()
     {
         if (Input.GetKeyDown(jumpKey) && RayToCheckIsGorund())
@@ -330,4 +414,5 @@ public class PlayerController : NetworkBehaviour
         }
         return false;
     }
+    #endregion
 }

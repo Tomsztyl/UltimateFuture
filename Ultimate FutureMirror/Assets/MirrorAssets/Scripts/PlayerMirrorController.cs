@@ -69,6 +69,7 @@ public class PlayerMirrorController : NetworkBehaviour
         isPlayer = isLocalPlayer;
         repairControllerMouse.enabled = isLocalPlayer;
         CameraControllerPlayer.enabled = isLocalPlayer;
+        GetComponent<InteractObjectController>().enabled = isLocalPlayer;
     }
     void SelectCharacterLayer()
     {

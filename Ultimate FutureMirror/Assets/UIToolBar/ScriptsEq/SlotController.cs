@@ -25,6 +25,7 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
     private void Update()
     {
+        CheckDisplayObject();
         SetObjectKeyTrigger();
         TriggerOnPointer();
     }
@@ -54,6 +55,16 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             Button buttonSlot = gameObject.transform.Find("Border").GetComponent<Button>();
             buttonSlot.Select();
             buttonSlot.onClick.Invoke();
+        }
+    }
+    private void CheckDisplayObject()
+    {
+        SetCount(countObject);
+
+        if (countObject<=0)
+        {
+            prefabObject = null;
+            spriteObject = null;
         }
     }
     public void SetPrefab(ScriptableObject gameObjectPrefab)
@@ -96,24 +107,24 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            listActionSlot.SetActive(isPonterOnSlot);
+            SetPropertiesDrop();
+        }
+    }
+    public void SetPropertiesDrop()
+    {
+        //Not empty slot
+        DropController dropController = listActionSlot.GetComponentInChildren<DropController>();
 
-            //Not empty slot
-            DropController dropController = listActionSlot.GetComponentInChildren<DropController>();
-
-            if (dropController != null)
-            {
-                dropController.SetMaxValueSlider(countObject);
-                dropController.SetImageDrop(spriteObject);
-            }
+        if (dropController != null && prefabObject != null && spriteObject != null && countObject > 0)
+        {
+            dropController.SetMaxValueSlider(countObject);
+            dropController.SetImageDrop(spriteObject);
+            dropController.SetCurrentSlot(GetComponent<SlotController>());
         }
     }
     #endregion
     #region Validation Variables
-    public void SetKeyCode(KeyCode keyCode)
-    {
-        keyCodeObject = keyCode;
-    }
+    #region Retunr Poperties Slot
     public ScriptableObject ReturnPrefab()
     {
         return prefabObject;
@@ -130,5 +141,16 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         return keyCodeObject;
     }
+    #endregion
+    #region Set Propierties Slot
+    public void SetKeyCode(KeyCode keyCode)
+    {
+        keyCodeObject = keyCode;
+    }
+    public void SetCountObjectSubstract(float countObjectProp)
+    {
+        countObject -= countObjectProp;
+    }
+    #endregion
     #endregion
 }

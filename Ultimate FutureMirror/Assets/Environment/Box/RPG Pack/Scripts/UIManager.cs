@@ -33,6 +33,7 @@ public class UIManager : NetworkBehaviour
     //Variable SelectBoxEq
     [SerializeField] private GameObject toolBox;
     [SerializeField] private KeyCode keyControlToolBox = KeyCode.E;
+    [SerializeField] private GameObject ListActionSlot = null;
     bool activeToolBox = false;
     
 
@@ -89,6 +90,7 @@ public class UIManager : NetworkBehaviour
         if (Input.GetKeyDown(keyControlToolBox) && activeToolBox == false)
         {
             toolBox.SetActive(true);
+            ListActionSlot.SetActive(true);
             Screen.lockCursor = false;
             Cursor.visible = true;
             activeToolBox = true;
@@ -96,6 +98,7 @@ public class UIManager : NetworkBehaviour
         else if (Input.GetKeyDown(keyControlToolBox)&&activeToolBox==true)
         {
             toolBox.SetActive(false);
+            ListActionSlot.SetActive(false);
             Screen.lockCursor = true;
             Cursor.visible = false;
             activeToolBox = false;

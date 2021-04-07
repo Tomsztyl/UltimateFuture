@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SlotController : MonoBehaviour
+public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("This Variables set object in EQ")]
     [SerializeField] private ScriptableObject prefabObject;
@@ -16,6 +17,7 @@ public class SlotController : MonoBehaviour
 
     [Header("This is Vairables set List Action Slot")]
     [SerializeField] private GameObject listActionSlot = null;
+    private bool isPonterOnSlot = false;
 
     private void Start()
     {
@@ -24,6 +26,7 @@ public class SlotController : MonoBehaviour
     private void Update()
     {
         SetObjectKeyTrigger();
+        TriggerOnPointer();
     }
     #region Set Object In EQ Slot
     private void SetObjectKeyTrigger()
@@ -71,26 +74,39 @@ public class SlotController : MonoBehaviour
         textCount.text = "" + countObject;
     }
     #endregion
-    #region Drop Object From Slot
-    private void TrrigerDrop()
+    #region Check Trigger On Pointer
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!IsEmptyCheckSlot())
+        isPonterOnSlot = true;
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        isPonterOnSlot = false;
+    }
+    private void TriggerOnPointer()
+    {
+        if (isPonterOnSlot)
         {
-            //Not empty slot
-
-        }
-        else
-        {
-            //Empty slot
+            TriggerDrop();
         }
     }
-    private bool IsEmptyCheckSlot()
+    #endregion
+    #region Drop Object From Slot
+    private void TriggerDrop()
     {
-        if (prefabObject == null && spriteObject == null && countObject <= 0)
+        if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            return true;
+            listActionSlot.SetActive(isPonterOnSlot);
+
+            //Not empty slot
+            DropController dropController = listActionSlot.GetComponentInChildren<DropController>();
+
+            if (dropController != null)
+            {
+                dropController.SetMaxValueSlider(countObject);
+                dropController.SetImageDrop(spriteObject);
+            }
         }
-        else return false;
     }
     #endregion
     #region Validation Variables

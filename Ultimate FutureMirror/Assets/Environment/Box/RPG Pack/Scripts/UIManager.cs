@@ -89,11 +89,15 @@ public class UIManager : NetworkBehaviour
         if (Input.GetKeyDown(keyControlToolBox) && activeToolBox == false)
         {
             toolBox.SetActive(true);
+            Screen.lockCursor = false;
+            Cursor.visible = true;
             activeToolBox = true;
         }
         else if (Input.GetKeyDown(keyControlToolBox)&&activeToolBox==true)
         {
             toolBox.SetActive(false);
+            Screen.lockCursor = true;
+            Cursor.visible = false;
             activeToolBox = false;
         }
     }

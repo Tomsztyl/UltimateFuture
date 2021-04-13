@@ -88,7 +88,7 @@ public class InventoryManager : NetworkBehaviour
         {
             SlotController slotController = FindSortEquipObject(slotToolBar).GetComponent<SlotController>();
             slotController.SetPrefab(scriptableObject);
-            slotController.SetSprite(spriteObj);
+            slotController.SetSprite(spriteObj,true);
             slotController.SetCount(countObj);
             //SendToServerObjectToolBar(slotController, scriptableObject, spriteObj, countObj);
         }
@@ -96,7 +96,7 @@ public class InventoryManager : NetworkBehaviour
         {
             SlotController slotController = FindSortEquipObject(slotEquipmentBox).GetComponent<SlotController>();
             slotController.SetPrefab(scriptableObject);
-            slotController.SetSprite(spriteObj);
+            slotController.SetSprite(spriteObj,true);
             slotController.SetCount(countObj);
             //SendToServerObjectToolBar(slotController, scriptableObject,spriteObj,countObj);
         }

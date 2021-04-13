@@ -17,6 +17,7 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     [Header("This is Vairables set List Action Slot")]
     [SerializeField] private GameObject listActionSlot = null;
+    [SerializeField] private KeyCode keyCodeDropObject = KeyCode.Mouse1;
     private bool isPonterOnSlot = false;
 
     private void Start()
@@ -64,6 +65,7 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (countObject<=0)
         {
             prefabObject = null;
+            SetSprite(null,false);
             spriteObject = null;
         }
     }
@@ -71,11 +73,11 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         prefabObject = gameObjectPrefab;
     }
-    public void SetSprite(Sprite sprite)
+    public void SetSprite(Sprite sprite, bool spriteEnable)
     {
         spriteObject = sprite;
         Image spriteimage = gameObject.transform.Find("Border/ItemImage").GetComponent<Image>();
-        spriteimage.enabled = true;
+        spriteimage.enabled = spriteEnable;
         spriteimage.sprite = spriteObject;
     }
     public void SetCount(float count)
@@ -105,7 +107,7 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     #region Drop Object From Slot
     private void TriggerDrop()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetKeyDown(keyCodeDropObject))
         {
             SetPropertiesDrop();
         }
@@ -118,7 +120,7 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (dropController != null && prefabObject != null && spriteObject != null && countObject > 0)
         {
             dropController.SetMaxValueSlider(countObject);
-            dropController.SetImageDrop(spriteObject);
+            dropController.SetImageDrop(spriteObject,true);
             dropController.SetCurrentSlot(GetComponent<SlotController>());
         }
     }

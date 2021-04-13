@@ -25,6 +25,12 @@ public class DropController : MonoBehaviour
     {
         if (_currentSlot!=null)
         {
+            if (_currentSlot.ReturnCountObject() <= 0 || _currentSlot.ReturnSprite() == null || _currentSlot.ReturnPrefab() == null)
+            {
+                SetMaxValueSlider(0);
+                SetImageDrop(null,false);
+                return;
+            }               
             _currentSlot.SetCountObjectSubstract(_sliderCount.value);
             _currentSlot.SetPropertiesDrop();
         }
@@ -40,10 +46,10 @@ public class DropController : MonoBehaviour
     {
         _sliderCount.maxValue = valueMax;
     }
-    public void SetImageDrop(Sprite spriteDropObject)
+    public void SetImageDrop(Sprite spriteDropObject, bool imageActiveDrop)
     {
         _imageDrop.sprite = spriteDropObject;
-        _imageDrop.enabled = true;
+        _imageDrop.enabled = imageActiveDrop;
     }
     public void SetCurrentSlot(SlotController slotController)
     {

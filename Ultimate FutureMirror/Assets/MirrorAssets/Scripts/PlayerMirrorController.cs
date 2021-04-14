@@ -334,10 +334,10 @@ public class PlayerMirrorController : NetworkBehaviour
     }
     #endregion
     #region Mechansm Drop Object
+    [Command]
     public void DropObjectServer(string nameDropObjectScriptable, Vector3 instantiateObjectDrop, float valueDrop)
     {
         DropObject(nameDropObjectScriptable, instantiateObjectDrop, valueDrop);
-        DropObjectClient(nameDropObjectScriptable, instantiateObjectDrop, valueDrop);
     }
     public void DropObject(string nameDropObjectScriptable,Vector3 instantiateObjectDrop, float valueDrop)
     {
@@ -353,7 +353,6 @@ public class PlayerMirrorController : NetworkBehaviour
                     if (NetworkServer.active) { NetworkServer.Spawn(InstantiateObject); }
 
                     PickUpMaterial pickUpMaterial = InstantiateObject.GetComponent<PickUpMaterial>();
-
                     if (pickUpMaterial!=null)
                     {
                         pickUpMaterial.SetCountObject(valueDrop);
@@ -365,7 +364,6 @@ public class PlayerMirrorController : NetworkBehaviour
                     HandObjectController handObjectController = (HandObjectController)((NetworkRoomManagerExt)NetworkManager.singleton).scriptableObjectToMirror[scriptableObject.index];
                     var InstantiateObjectWeapone = Instantiate(handObjectController.RetrunObjectDropPreafabGround(), instantiateObjectDrop, Quaternion.identity);
                     if (NetworkServer.active) { NetworkServer.Spawn(InstantiateObjectWeapone); }
-
                     PickUpMaterial pickUpMaterial = InstantiateObjectWeapone.GetComponent<PickUpMaterial>();
 
                     if (pickUpMaterial != null)
@@ -376,10 +374,6 @@ public class PlayerMirrorController : NetworkBehaviour
                 }              
             }
         }
-    }
-    public void DropObjectClient(string nameDropObjectScriptable, Vector3 instantiateObjectDrop, float valueDrop)
-    {
-        DropObject(nameDropObjectScriptable, instantiateObjectDrop, valueDrop);
     }
     #endregion
 

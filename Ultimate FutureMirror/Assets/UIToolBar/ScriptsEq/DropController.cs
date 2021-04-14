@@ -27,22 +27,28 @@ public class DropController : MonoBehaviour
     {
         if (_currentSlot!=null)
         {
-            if (_currentSlot.ReturnCountObject() <= 0 || _currentSlot.ReturnSprite() == null || _currentSlot.ReturnPrefab() == null)
-            {
-                SetMaxValueSlider(0);
-                SetImageDrop(null,false);
-                return;
-            } 
-            
-            if (_sliderCount.value!=0)
+            CheckIsSlotEmpty();
+
+            if (_sliderCount.value!=0&& !CheckIsSlotEmpty())
             {
                 //Drop Object Mechanism
                 _currentSlot.SetCountObjectSubstract(_sliderCount.value);
                 _currentSlot.SetPropertiesDrop();
                 DropObjectFromCharacter();
+                CheckIsSlotEmpty();
             }
             
         }
+    }
+    private bool CheckIsSlotEmpty()
+    {
+        if (_currentSlot.ReturnCountObject() <= 0 || _currentSlot.ReturnSprite() == null || _currentSlot.ReturnPrefab() == null)
+        {
+            SetMaxValueSlider(0);
+            SetImageDrop(null, false);
+            return true;
+        }
+        return false;
     }
     private void DropObjectFromCharacter()
     {

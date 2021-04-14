@@ -14,6 +14,8 @@ public class DropController : MonoBehaviour
 
     [Header("This is a variable to drop object")]
     [SerializeField] private SlotController _currentSlot = null;
+    [SerializeField] private Vector3 dropObjectPostion = new Vector3(0f, 2f, 4f);
+    private Vector3 tranformObjectCalcuated;
 
     private void Start()
     {
@@ -30,10 +32,44 @@ public class DropController : MonoBehaviour
                 SetMaxValueSlider(0);
                 SetImageDrop(null,false);
                 return;
-            }               
-            _currentSlot.SetCountObjectSubstract(_sliderCount.value);
-            _currentSlot.SetPropertiesDrop();
+            } 
+            
+            if (_sliderCount.value!=0)
+            {
+                //Drop Object Mechanism
+                _currentSlot.SetCountObjectSubstract(_sliderCount.value);
+                _currentSlot.SetPropertiesDrop();
+                DropObjectFromCharacter();
+            }
+            
         }
+    }
+    private void DropObjectFromCharacter()
+    {
+        PlayerMirrorController playerMirrorController = this.gameObject.transform.root.GetComponent<PlayerMirrorController>();
+
+        if (playerMirrorController!=null)
+        {
+            if (_currentSlot.ReturnPrefab()!=null)
+            {
+                playerMirrorController.DropObjectServer(_currentSlot.ReturnPrefab().name,TranfromDropObjectFromCharacter(), _sliderCount.value);
+            }
+        }
+    }
+    private Vector3 TranfromDropObjectFromCharacter()
+    {
+        CalculateInstantiateObjectDrop();
+        return tranformObjectCalcuated;
+    }
+    private void CalculateInstantiateObjectDrop()
+    {
+        tranformObjectCalcuated = new Vector3(transform.root.position.x, transform.root.position.y + dropObjectPostion.y, transform.root.position.z) + (transform.root.forward * dropObjectPostion.z);
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        CalculateInstantiateObjectDrop();
+        Gizmos.DrawWireCube(tranformObjectCalcuated, new Vector3(2f,2f,2f));
     }
     #endregion
 

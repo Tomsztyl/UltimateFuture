@@ -122,6 +122,7 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             dropController.SetMaxValueSlider(countObject);
             dropController.SetImageDrop(spriteObject,true);
             dropController.SetCurrentSlot(GetComponent<SlotController>());
+
         }
     }
     #endregion

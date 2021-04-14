@@ -19,10 +19,10 @@ public class PickUpMaterial : NetworkBehaviour
     private void Start()
     {
         //Random coundObject
-        RandomCountObject();
+        //RandomCountObject();
     }
     [ServerCallback]
-    private void RandomCountObject()
+    public void RandomCountObject()
     {
         countObject = Random.Range(1, 10);
     }
@@ -60,5 +60,9 @@ public class PickUpMaterial : NetworkBehaviour
         {
             Debug.LogWarning("Object no exist and you don't have slot in EQ");
         }
+    }
+    public void SetCountObject(float count)
+    {
+        countObject = count;
     }
 }

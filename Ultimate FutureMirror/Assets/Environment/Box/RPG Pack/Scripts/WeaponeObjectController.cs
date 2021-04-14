@@ -15,6 +15,11 @@ public class WeaponeObjectController : ScriptableObject
     [Tooltip("Set Child WepaoneHand")]
     public GameObject weaponeHand;
 
+    //Set Prefab Drop Properties
+    [Header("Prafab In The Player Drop")]
+    [Tooltip("This object is a object to drop ground from player")]
+    [SerializeField] private GameObject objectDropWeaponePrefabGround = null;
+
     //Properties Weapone
     [Tooltip("Set Properties Weapone")]
     [Header("This is a properties Weapone")]
@@ -44,6 +49,10 @@ public class WeaponeObjectController : ScriptableObject
     public GameObject ReturnWeaponeHand()
     {
         return weaponeHand;
+    }
+    public GameObject RetrunObjectWeaponeDropPreafabGround()
+    {
+        return objectDropWeaponePrefabGround;
     }
     public Vector3 ReturnPositionInstantiate(CharacterSelectPerks characterSelectPerks)
     {

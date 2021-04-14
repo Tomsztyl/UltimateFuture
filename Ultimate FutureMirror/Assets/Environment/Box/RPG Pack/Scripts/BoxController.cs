@@ -52,6 +52,11 @@ public class BoxController : NetworkBehaviour
             if (NetworkServer.active)
             {
                 NetworkServer.Spawn(randomObjectInstantiate);
+                PickUpMaterial pickUpMaterialObject = randomObjectInstantiate.GetComponent<PickUpMaterial>();
+                if (pickUpMaterialObject!=null)
+                {
+                    pickUpMaterialObject.RandomCountObject();
+                }
             }
         }
     }
@@ -71,7 +76,10 @@ public class BoxController : NetworkBehaviour
     private void DestoryObjectChange()
     {
        var objectDestoyBoxPandora=Instantiate(destroy_box, transform.position, Quaternion.identity);
-        if (NetworkServer.active) { NetworkServer.Spawn(objectDestoyBoxPandora); }
+        if (NetworkServer.active) 
+        {
+            NetworkServer.Spawn(objectDestoyBoxPandora);
+        }
     }
     private void DestroyObjectBoxPandora()
     {

@@ -333,6 +333,55 @@ public class PlayerMirrorController : NetworkBehaviour
         UpdatePointerPostion(postionPointer);
     }
     #endregion
+    #region Mechansm Drop Object
+    public void DropObjectServer(string nameDropObjectScriptable, Vector3 instantiateObjectDrop, float valueDrop)
+    {
+        DropObject(nameDropObjectScriptable, instantiateObjectDrop, valueDrop);
+        DropObjectClient(nameDropObjectScriptable, instantiateObjectDrop, valueDrop);
+    }
+    public void DropObject(string nameDropObjectScriptable,Vector3 instantiateObjectDrop, float valueDrop)
+    {
+        //var InstantiateDropObject=Instantiate()
+        foreach (var scriptableObject in ((NetworkRoomManagerExt)NetworkManager.singleton).scriptableObjectToMirror.Select(((value, index) => new { value, index })))
+        {          
+            if (scriptableObject.value.name == nameDropObjectScriptable)
+            {
+                if (((NetworkRoomManagerExt)NetworkManager.singleton).scriptableObjectToMirror[scriptableObject.index] is WeaponeObjectController)
+                {
+                    WeaponeObjectController weaponeObjectController = (WeaponeObjectController)((NetworkRoomManagerExt)NetworkManager.singleton).scriptableObjectToMirror[scriptableObject.index];
+                    var InstantiateObject = Instantiate(weaponeObjectController.RetrunObjectWeaponeDropPreafabGround(), instantiateObjectDrop,Quaternion.identity);
+                    if (NetworkServer.active) { NetworkServer.Spawn(InstantiateObject); }
+
+                    PickUpMaterial pickUpMaterial = InstantiateObject.GetComponent<PickUpMaterial>();
+
+                    if (pickUpMaterial!=null)
+                    {
+                        pickUpMaterial.SetCountObject(valueDrop);
+                    }
+                    continue;
+                }
+                else if(((NetworkRoomManagerExt)NetworkManager.singleton).scriptableObjectToMirror[scriptableObject.index] is HandObjectController)
+                {
+                    HandObjectController handObjectController = (HandObjectController)((NetworkRoomManagerExt)NetworkManager.singleton).scriptableObjectToMirror[scriptableObject.index];
+                    var InstantiateObjectWeapone = Instantiate(handObjectController.RetrunObjectDropPreafabGround(), instantiateObjectDrop, Quaternion.identity);
+                    if (NetworkServer.active) { NetworkServer.Spawn(InstantiateObjectWeapone); }
+
+                    PickUpMaterial pickUpMaterial = InstantiateObjectWeapone.GetComponent<PickUpMaterial>();
+
+                    if (pickUpMaterial != null)
+                    {
+                        pickUpMaterial.SetCountObject(valueDrop);
+                    }
+                    continue;
+                }              
+            }
+        }
+    }
+    public void DropObjectClient(string nameDropObjectScriptable, Vector3 instantiateObjectDrop, float valueDrop)
+    {
+        DropObject(nameDropObjectScriptable, instantiateObjectDrop, valueDrop);
+    }
+    #endregion
 
 
 }

@@ -15,6 +15,11 @@ public class HandObjectController : ScriptableObject
     [Tooltip("Set Child objectInHandPref")]
     [SerializeField] private GameObject objectInHandPref;
 
+    //Set Prefab Drop Properties
+    [Header("Prafab In The Player Drop")]
+    [Tooltip("This object is a object to drop ground from player")]
+    [SerializeField] private GameObject objectDropPrefabGround = null;
+
 
     //Properties Object
     [Tooltip("Set Properties Object")]
@@ -26,10 +31,15 @@ public class HandObjectController : ScriptableObject
     [Tooltip("This variable set speed rotation Player if have object in hand")]
     [SerializeField] private float speedRotationPlayer=0f;
 
+
     #region Properties Return to Instantiate Weapone Start
     public GameObject ReturnObjectInHandPref()
     {
         return objectInHandPref;
+    }
+    public GameObject RetrunObjectDropPreafabGround()
+    {
+        return objectDropPrefabGround;
     }
     public Vector3 ReturnPositionInstantiate(CharacterSelectPerks characterSelectPerks)
     {
@@ -44,6 +54,7 @@ public class HandObjectController : ScriptableObject
         return GetTrandormInstantiateCharacter(characterSelectPerks).scaleLocal;
     }
     #endregion
+
     #region Tranform Instantriate Object In Hand
     [SerializeField]
     public TranformObjectIsInstatniate _tranfromInstantiateObjectHand;

@@ -10,6 +10,8 @@ public class InventoryManager : NetworkBehaviour
     [SerializeField] private GameObject equipmentBox;
     [SerializeField] private List<GameObject> slotEquipmentBox = new List<GameObject>();
 
+    [SerializeField] private Vector3 dropObjectPostion = new Vector3(0f, 2f, 4f);
+    private Vector3 tranformObjectCalcuated;
 
 
 
@@ -19,7 +21,7 @@ public class InventoryManager : NetworkBehaviour
     }
 
 
-
+    #region Find All Slot EQ
     private void FindAllSlot()
     {
         foreach (Transform child in toolBar.transform)
@@ -31,6 +33,8 @@ public class InventoryManager : NetworkBehaviour
             slotEquipmentBox.Add(child.gameObject);
         }
     }
+    #endregion
+    #region Mechanism Set Object In Eq
     private GameObject CheckObjectItExist(ScriptableObject gameObject, Sprite sprite, List<GameObject> listGameObject)
     {
         foreach (GameObject slotControllerObj in listGameObject)
@@ -101,4 +105,56 @@ public class InventoryManager : NetworkBehaviour
             //SendToServerObjectToolBar(slotController, scriptableObject,spriteObj,countObj);
         }
     }
+    #endregion
+    #region Drop All Object From Eq
+    public void DropAllObjectFromEq()
+    {
+        foreach(GameObject slotControllerObj in slotToolBar)
+        {
+            //Drop Object From Slots ToolBar
+            SlotController slotController = slotControllerObj.GetComponent<SlotController>();
+            DropObjectFromSlotMirror(slotController);
+
+        }
+
+        foreach (GameObject slotControllerObj in slotEquipmentBox)
+        {
+            //Drop Object From Slots Equipment Box
+            SlotController slotController = slotControllerObj.GetComponent<SlotController>();
+            DropObjectFromSlotMirror(slotController);
+                         
+        }
+    }
+    private void DropObjectFromSlotMirror(SlotController slotController)
+    {
+        if (slotController != null)
+        {
+            if (slotController.ReturnPrefab() != null || slotController.ReturnSprite() != null || slotController.ReturnCountObject() > 0)
+            {
+                PlayerMirrorController playerMirrorController = this.gameObject.transform.root.GetComponent<PlayerMirrorController>();
+                if (playerMirrorController != null)
+                {
+                    playerMirrorController.DropObjectServer(slotController.ReturnPrefab().name, CalculateInstantiateObjectDrop(), slotController.ReturnCountObject());
+                    playerMirrorController.DestoryAllObjectInHandServer();
+                }
+                    
+
+                slotController.SetCount(0);
+                slotController.SetPrefab(null);
+                slotController.SetSprite(null, false);
+            }
+        }
+    }
+    private Vector3 CalculateInstantiateObjectDrop()
+    {
+        tranformObjectCalcuated = new Vector3(transform.root.position.x, transform.root.position.y + dropObjectPostion.y, transform.root.position.z) + (transform.root.forward * dropObjectPostion.z);
+        return tranformObjectCalcuated;
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        CalculateInstantiateObjectDrop();
+        Gizmos.DrawWireCube(tranformObjectCalcuated, new Vector3(2f, 2f, 2f));
+    }
+    #endregion
 }

@@ -69,21 +69,8 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             spriteObject = null;
         }
     }
-    public void SetPrefab(ScriptableObject gameObjectPrefab)
+    private void DisplayCount(Text textCount)
     {
-        prefabObject = gameObjectPrefab;
-    }
-    public void SetSprite(Sprite sprite, bool spriteEnable)
-    {
-        spriteObject = sprite;
-        Image spriteimage = gameObject.transform.Find("Border/ItemImage").GetComponent<Image>();
-        spriteimage.enabled = spriteEnable;
-        spriteimage.sprite = spriteObject;
-    }
-    public void SetCount(float count)
-    {
-        countObject = count;
-        Text textCount = gameObject.transform.Find("Border/ItemImage/Count").GetComponent<Text>();
         textCount.text = "" + countObject;
     }
     #endregion
@@ -153,6 +140,27 @@ public class SlotController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void SetCountObjectSubstract(float countObjectProp)
     {
         countObject -= countObjectProp;
+    }
+    public void SetPrefab(ScriptableObject gameObjectPrefab)
+    {
+        prefabObject = gameObjectPrefab;
+    }
+    public void SetSprite(Sprite sprite, bool spriteEnable)
+    {
+        spriteObject = sprite;
+        Image spriteimage = gameObject.transform.Find("Border/ItemImage").GetComponent<Image>();
+        spriteimage.enabled = spriteEnable;
+        spriteimage.sprite = spriteObject;
+    }
+    public void SetCount(float count)
+    {
+        countObject = count;
+        Text textCount = gameObject.transform.Find("Border/ItemImage/Count").GetComponent<Text>();
+        if (countObject > 0) DisplayCount(textCount);
+        else
+        {
+            textCount.text = string.Empty;
+        }
     }
     #endregion
     #endregion

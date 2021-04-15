@@ -19,12 +19,17 @@ public class HealthController : NetworkBehaviour
     public float healt = 100;
     [SyncVar]
     public float healtdef;
-    //[SerializeField] private KindCharacter kindCharacter;
     public TextMeshPro textHealt;
 
+    [Header("Mechanism Death Character")]
     [SerializeField] private CharacterKind characterKind = CharacterKind.None;
     private bool isDying = false;
     [SerializeField] private bool death = false;
+    [SerializeField] private LayerMask layerMaskDeath;
+    [SerializeField] private InventoryManager inventoryManager = null;
+
+    [Header("Bar Health Character")]
+    [SerializeField] private GameObject barHealthCharacter = null;
 
     private void Awake()
     {
@@ -70,6 +75,18 @@ public class HealthController : NetworkBehaviour
     {
         DisplayText();
     }
+    #region Display Bar Health
+    #region Mechanism Calculate Percent
+    private int ValueToPercent(float value, float defValue)
+    {
+        return (int)((int)value * 100 / defValue);
+    }
+    private float PercentToValue(float value, int percent)
+    {
+        return (float)((float)value * percent * 0.01);
+    }
+    #endregion
+    #endregion
     #region Controller Dying Character
     private void CheckCharacterKind()
     {
@@ -83,10 +100,22 @@ public class HealthController : NetworkBehaviour
             GetComponent<PlayerController>().enabled = false;
             GetComponent<PlayerMirrorController>().enabled = false;
             GetComponent<FightController>().enabled = false;
+            DeathCharacterObject();
         }
         else if (characterKind==CharacterKind.Enemy)
         {
 
+        }
+    }
+    private void DeathCharacterObject()
+    {
+        GetComponent<CapsuleCollider>().isTrigger = true;
+        GetComponent<Rigidbody>().useGravity = false;
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        this.gameObject.layer = layerMaskDeath;
+        if (inventoryManager!=null)
+        {
+            inventoryManager.DropAllObjectFromEq();
         }
     }
     private IEnumerator PlayAnimationDeathOnlyOnce(string paramName)

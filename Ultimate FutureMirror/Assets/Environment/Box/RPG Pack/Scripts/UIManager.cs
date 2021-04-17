@@ -51,8 +51,6 @@ public class UIManager : NetworkBehaviour
         ChangeToolBoxActive();
         ChooseBarMechanic();
     }
-
-
     public void ManagerMessagePanel(string textMessagePanel, bool isInColider)
     {
         if (isInColider==true)
@@ -178,11 +176,11 @@ public class UIManager : NetworkBehaviour
             return null;
         }
     }
-    private int ValueToPercent(float value,float defValue)
+    public int ValueToPercent(float value,float defValue)
     {
         return (int)((int)value * 100 / defValue);
     }
-    private float PercentToValue(float value,int percent)
+    public float PercentToValue(float value,int percent)
     {
         return (float)((float)value * percent * 0.01);
     }

@@ -39,21 +39,56 @@ public class InteractObjectController : NetworkBehaviour
         if (Physics.Raycast(GetComponent<CameraControllerPlayer>().GetChooseCamera().transform.position, GetComponent<CameraControllerPlayer>().GetChooseCamera().transform.forward, out hit, interactionRange, layerMaskIngoreRay))
         {
             //Send To Server to Clinets Point Hit
-            InteractionHitBoxPandora(hit);
+            if (hit.transform.tag== "InteractDoor" || hit.transform.GetComponent<BoxController>()!=null)
+            {
+                InteractionOpenDor(hit);
+                InteractionHitBoxPandora(hit);
+            }
+            else
+            {
+                ExitInteractObjectBoxPandora();
+            }
+
         }
+        
     }
+    #region Interaction Open Door
+    private  void InteractionOpenDor(RaycastHit hit)
+    {
+        if (hit.transform.tag== "InteractDoor")
+        {
+            StartInteractObjectDisplay(" to switch state -");
+            if (Input.GetKeyDown(_interactKey))
+            {
+                Animator animatorDoor = hit.transform.GetComponent<Animator>();
+                if (animatorDoor!=null)
+                {
+                    if (!animatorDoor.GetBool("character_nearby"))
+                    {
+                        animatorDoor.SetBool("character_nearby", !animatorDoor.GetBool("character_nearby"));
+                    }
+                    else
+                    {
+                        animatorDoor.SetBool("character_nearby", !animatorDoor.GetBool("character_nearby"));
+                    }
+                }
+               
+                
+            }
+            
+        }
+       
+    }
+    #endregion
+    #region Interaction Hit With BoX Pandora
     private void InteractionHitBoxPandora(RaycastHit hit)
     {
         BoxController boxController = hit.transform.GetComponent<BoxController>();
 
         if (boxController != null)
         {
-            StartInteractObjectBoxPandora();
+            StartInteractObjectDisplay(" to break -");
             CheckPressInteractButton(boxController);
-        }
-        else
-        {
-            ExitInteractObjectBoxPandora();
         }
     }
     private void IdNetworkkBoxPandoraInServer(BoxController boxController)
@@ -68,21 +103,21 @@ public class InteractObjectController : NetworkBehaviour
             NetworkIdentity.spawned[netIdBoxPandora].GetComponent<BoxController>().ExtractBoxPandora();
         }
     }
+    #endregion
     #region Press Button Interact
     private void CheckPressInteractButton(BoxController boxController)
     {
         if (Input.GetKeyDown(_interactKey))
         {
             IdNetworkkBoxPandoraInServer(boxController);
-            //boxController.ExtractBoxPandora();
         }
     }
     #endregion
     #region Interact with BoxPandora
-    private void StartInteractObjectBoxPandora()
+    private void StartInteractObjectDisplay(string TxtObjectInteraction)
     {
         //send Message Print to player
-        SendTriggerToUIPlayer("- Press " + _interactKey + " to break -", true);
+        SendTriggerToUIPlayer("- Press " + _interactKey + TxtObjectInteraction, true);
     }
     private void ExitInteractObjectBoxPandora()
     {

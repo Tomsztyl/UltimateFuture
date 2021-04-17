@@ -7,7 +7,6 @@ public class CameraControllerPlayer : MonoBehaviour
     //Variable Select Camera
     [SerializeField] public bool thirdCamera = false;
     [SerializeField] public bool firstCamera = false;
-    private AuthentionController authentionController;
     private GameObject cameraChoose;
 
     //KeyToSelectCamera
@@ -26,7 +25,6 @@ public class CameraControllerPlayer : MonoBehaviour
 
     private void Start()
     {
-        authentionController = GameObject.FindObjectOfType<AuthentionController>().GetComponent<AuthentionController>();
         //Default ThirdCamera
         cameraChoose = thirdCameraPref;
         pivotCameras = thirdCameraPref.transform.parent;

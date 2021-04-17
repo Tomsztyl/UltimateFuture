@@ -30,6 +30,7 @@ public class SelectCharacterManager : NetworkBehaviour
             }
         }
     }
+    [Client]
     public void InstantiateSelectCharacter()
     {
         if (selectCharacter != null)

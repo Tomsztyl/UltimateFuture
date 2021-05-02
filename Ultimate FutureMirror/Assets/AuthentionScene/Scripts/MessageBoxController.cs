@@ -28,7 +28,7 @@ public class MessageBoxController : MonoBehaviour
     public void DisplayTextMessageBox(string textDisplay)
     {
         DateTime dt = DateTime.Now;
-        _textDisplayBoxMessage.text = "@MENAGER[" + dt.ToString("HH:mm") + "]~" + textDisplay;
+        _textDisplayBoxMessage.text = "@MANAGER[" + dt.ToString("HH:mm") + "]~" + textDisplay;
     }
     #endregion
 }

@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -8,7 +11,7 @@ public class AuthentionRegisterController : MonoBehaviour
 {
     [Header("Input from Box Register")]
     [SerializeField] private InputField _textLogin = null;
-    [SerializeField] private int _lenghtLoginMin=3;
+    [SerializeField] private int _lenghtLoginMin = 3;
     [SerializeField] private InputField _textEmail = null;
     [SerializeField] private int _lenghtEmailMin = 6;
     [SerializeField] private InputField _textPass = null;
@@ -16,11 +19,26 @@ public class AuthentionRegisterController : MonoBehaviour
     [SerializeField] private InputField _textRepPass = null;
 
     [Header("Variable Message Box")]
-    [SerializeField]private GameObject _messageBoxControllerObj = null;
-    [SerializeField]private MessageBoxController _messageBoxController = null;
+    [SerializeField] private GameObject _messageBoxControllerObj = null;
+    [SerializeField] private MessageBoxController _messageBoxController = null;
 
 
     #region Validation Input Filed
+    private void ValidationMessageBoxController()
+    {
+        if (_messageBoxController != null)
+        {
+            return;
+        }
+        else
+        {
+            if (_messageBoxControllerObj != null)
+            {
+                _messageBoxController = _messageBoxControllerObj.GetComponent<MessageBoxController>();
+            }
+        }
+
+    }
     #region Validation Password
     private bool IsPassRepIsCorrcet()
     {
@@ -30,27 +48,33 @@ public class AuthentionRegisterController : MonoBehaviour
             Debug.LogError("Input Text Password is NULL");
             return false;
         }
-        if (_textRepPass==null)
+        if (_textRepPass == null)
         {
             Debug.LogError("Input Text RepPassword is NULL");
-            return false ;
+            return false;
         }
         #endregion
 
-        if (_textPass.text == _textRepPass.text)
+        if (_textPass.text == _textRepPass.text && _textPass.text.Length >= _lenghtPassMin)
             return true;
         else
+        {
             return false;
+        }
     }
     #endregion
     #region Validation Login
     private bool IsLoginCorrect()
     {
-        if (_textLogin.text.Length>= _lenghtLoginMin)
+        if (_textLogin.text.Length >= _lenghtLoginMin)
         {
             return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
+
     }
     #endregion
     #region Validation Email
@@ -59,7 +83,9 @@ public class AuthentionRegisterController : MonoBehaviour
         if (_textEmail.text.Length >= _lenghtEmailMin)
             return true;
         else
-            return false;   
+        {
+            return false;
+        }
     }
     #endregion
     #endregion
@@ -67,17 +93,32 @@ public class AuthentionRegisterController : MonoBehaviour
     public void ExeciuteRequestToDataBase()
     {
         if (IsPassRepIsCorrcet() && IsLoginCorrect() && IsEmailCorrect())
-            Register(_textLogin.text, _textPass.text, _textEmail.text);
-        else
+            StartCoroutine(Register(_textLogin.text, _textPass.text, _textEmail.text));
+        else if (!IsPassRepIsCorrcet() && !IsLoginCorrect() && !IsEmailCorrect())
         {
-            if (_messageBoxControllerObj != null)
-            {
-                _messageBoxControllerObj.SetActive(true);
-                _messageBoxController = _messageBoxControllerObj.GetComponent<MessageBoxController>();
-                _messageBoxController.DisplayTextMessageBox("Compleat fields!");
-            }       
+            _messageBoxControllerObj.SetActive(true);
+            ValidationMessageBoxController();
+            _messageBoxController.DisplayTextMessageBox("Complete all fields!");
         }
-           
+        else if (!IsEmailCorrect())
+        {
+            _messageBoxControllerObj.SetActive(true);
+            ValidationMessageBoxController();
+            _messageBoxController.DisplayTextMessageBox("Your Email is to short minimum sign:[" + _lenghtEmailMin + "]!");
+        }
+        else if (!IsLoginCorrect())
+        {
+            _messageBoxControllerObj.SetActive(true);
+            ValidationMessageBoxController();
+            _messageBoxController.DisplayTextMessageBox("Your Login is to short minimum sign:[" + _lenghtLoginMin + "]!");
+        }
+        else if (!IsPassRepIsCorrcet())
+        {
+            _messageBoxControllerObj.SetActive(true);
+            ValidationMessageBoxController();
+            _messageBoxController.DisplayTextMessageBox("Your password does not meet the requirements, minimum sign:[" + _lenghtPassMin + "]!");
+        }
+
     }
     IEnumerator Register(string usernameReg, string passwordReg, string mailReg)
     {
@@ -93,23 +134,16 @@ public class AuthentionRegisterController : MonoBehaviour
             if (www.isNetworkError || www.isHttpError)
             {
                 //Display Error
-                if (_messageBoxControllerObj != null)
-                {
-                    _messageBoxControllerObj.SetActive(true);
-                    _messageBoxController = _messageBoxControllerObj.GetComponent<MessageBoxController>();
-                    _messageBoxController.DisplayTextMessageBox(www.error);
-                }               
+                _messageBoxControllerObj.SetActive(true);
+                ValidationMessageBoxController();
+                _messageBoxController.DisplayTextMessageBox(www.error);
             }
             else
             {
                 //Display Request Correct From Data Base
-                //Display Error
-                if (_messageBoxControllerObj != null)
-                {
-                    _messageBoxControllerObj.SetActive(true);
-                    _messageBoxController = _messageBoxControllerObj.GetComponent<MessageBoxController>();
-                    _messageBoxController.DisplayTextMessageBox(www.downloadHandler.text);
-                }               
+                _messageBoxControllerObj.SetActive(true);
+                ValidationMessageBoxController();
+                _messageBoxController.DisplayTextMessageBox(www.downloadHandler.text);
             }
         }
     }

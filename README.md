@@ -8,3 +8,4 @@
 ![image](https://user-images.githubusercontent.com/60610578/116785813-c9f71c80-aa9b-11eb-87d5-bd8d5ab95342.png)
 ![image](https://user-images.githubusercontent.com/60610578/116785851-00cd3280-aa9c-11eb-975f-6187b0299f22.png)
 
+#PROJECTS ARE MADE FOR EDUCATIONAL PURPOSES.
